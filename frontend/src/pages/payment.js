@@ -3,8 +3,6 @@ import Eos from 'eosjs'; // https://github.com/EOSIO/eosjs
 
 // material-ui dependencies
 import { withStyles } from '@material-ui/core/styles';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
@@ -45,8 +43,8 @@ const styles = theme => ({
   },
 });
 
-// Index component
-class Index extends Component {
+// Payment component
+class Payment extends Component {
 
   constructor(props) {
     super(props)
@@ -144,15 +142,11 @@ class Index extends Component {
 
     return (
       <div>
-        <AppBar position="static" color="default">
-          <Toolbar>
-            <Typography variant="title" color="inherit">
-              Note Chain
-            </Typography>
-          </Toolbar>
-        </AppBar>
         {noteCards}
         <Paper className={classes.paper}>
+          <Typography variant="title" color="inherit">
+            Payment
+          </Typography>
           <form onSubmit={this.handleFormEvent}>
             <TextField
               name="account"
@@ -197,4 +191,4 @@ class Index extends Component {
 
 }
 
-export default withStyles(styles)(Index);
+export default withStyles(styles)(Payment);
