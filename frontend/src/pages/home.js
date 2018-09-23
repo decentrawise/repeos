@@ -1,11 +1,17 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import Eos from 'eosjs'; // https://github.com/EOSIO/eosjs
 
 // material-ui dependencies
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Card from '@material-ui/core/Card';
+import CardHeader from '@material-ui/core/CardHeader';
+import Snackbar from '@material-ui/core/Snackbar';
+import CardActionArea from '@material-ui/core/CardActionArea';
+import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
+import CardMedia from '@material-ui/core/CardMedia';
 import TextField from '@material-ui/core/TextField';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
@@ -25,7 +31,11 @@ const accounts = [
 // set up styling classes using material-ui "withStyles"
 const styles = theme => ({
   card: {
-    margin: 20,
+    marginLeft: 300,
+    marginRight: 300,
+  },
+  media: {
+    height: 400,
   },
   paper: {
     ...theme.mixins.gutters(),
@@ -47,9 +57,19 @@ const styles = theme => ({
 class Home extends Component {
 
   constructor(props) {
-    super(props)
+    super(props);
+
+    this.props = props;
+
     this.state = {
-      noteTable: [] // to store the table rows from smart contract
+      data: {
+        title: 'Trespass Edwards II Mens Waterproof Jacket with Hood in Green Blue & Grey',
+        price: 120,
+        largeImage: '/images/jacket1.jpg',
+        shortDescription: 'The Edwards II men\'s waterproof jacket is a great option if you are looking for a casual jacket.',
+        longDescription: `This hooded men's jacket is designed using waterproof, windproof and breathable fabric, allowing you to feel comfortable and cosy all day long. Four zipped pockets allow you to store all your must-have items such as your keys, wallet and gloves. Made in 4 different colours, this waterproof jacket is a great option for work, travel or spending time outdoors. This waterproof jacket is designed in 4 different colours: blue, black, olive green and carbon grey.
+        Product Features: Adjustable Concealed Hood, 2 Zipped Lower Pockets, Zipped Chest Pocket, Hem Drawcord with Side Adjusters, Elasticated Cuff with Adjustable Tabs, Inner Zipped Pocket.`
+      }
     };
     this.handleFormEvent = this.handleFormEvent.bind(this);
   }
@@ -100,91 +120,48 @@ class Home extends Component {
     this.getTable();
   }
 
-  // gets table data from the blockchain
-  // and saves it into the component state: "noteTable"
-  getTable() {
-    const eos = Eos();
-    eos.getTableRows({
-      "json": true,
-      "code": "notechainacc",   // contract who owns the table
-      "scope": "notechainacc",  // scope of the table
-      "table": "notestruct",    // name of the table as specified by the contract abi
-      "limit": 100,
-    }).then(result => this.setState({ noteTable: result.rows }));
-  }
-
-  componentDidMount() {
-    this.getTable();
-  }
-
   render() {
     const { noteTable } = this.state;
     const { classes } = this.props;
 
-    // generate each note as a card
-    const generateCard = (key, timestamp, user, note) => (
-      <Card className={classes.card} key={key}>
-        <CardContent>
-          <Typography variant="headline" component="h2">
-            {user}
-          </Typography>
-          <Typography style={{fontSize:12}} color="textSecondary" gutterBottom>
-            {new Date(timestamp*1000).toString()}
-          </Typography>
-          <Typography component="pre">
-            {note}
-          </Typography>
-        </CardContent>
-      </Card>
+    const ButtonToNavigate = ({ title, history, to }) => (
+      <Button
+        size="small" color="primary"
+        onClick={() => history.push(to)}
+      >
+        {title}
+      </Button>
     );
-    let noteCards = noteTable.map((row, i) =>
-      generateCard(i, row.timestamp, row.user, row.note));
 
     return (
       <div>
-        {noteCards}
         <Paper className={classes.paper}>
-          <Typography variant="title" color="inherit">
-            Home
-          </Typography>
-          <form onSubmit={this.handleFormEvent}>
-            <TextField
-              name="account"
-              autoComplete="off"
-              label="Account"
-              margin="normal"
-              fullWidth
-            />
-            <TextField
-              name="privateKey"
-              autoComplete="off"
-              label="Private key"
-              margin="normal"
-              fullWidth
-            />
-            <TextField
-              name="note"
-              autoComplete="off"
-              label="Note (Optional)"
-              margin="normal"
-              multiline
-              rows="10"
-              fullWidth
-            />
-            <Button
-              variant="contained"
-              color="primary"
-              className={classes.formButton}
-              type="submit">
-              Add / Update note
-            </Button>
-          </form>
+          <Card className={classes.card}>
+            <CardActionArea>
+              <CardMedia
+                className={classes.media}
+                image={this.state.data.largeImage}
+                title={this.state.data.shortDescription}
+              />
+              <CardContent>
+                <Typography gutterBottom variant="headline" component="h3" color="secondary" align="right">
+                  {this.state.data.price + '€'}
+                </Typography>
+                <Typography variant="headline" component="h2">
+                  {this.state.data.title}
+                </Typography>
+                <Typography component="p">
+                  {this.state.data.shortDescription}
+                  {this.state.data.longDescription}
+                </Typography>
+              </CardContent>
+            </CardActionArea>
+            <CardActions>
+              <ButtonToNavigate {...this.props} title="Back" to="/" />
+              <ButtonToNavigate {...this.props} title="BUY" to="/payment" />
+            </CardActions>
+          </Card>
         </Paper>
-        <pre className={classes.pre}>
-          Below is a list of pre-created accounts information for add/update note:
-          <br/><br/>
-          accounts = { JSON.stringify(accounts, null, 2) }
-        </pre>
       </div>
     );
   }
