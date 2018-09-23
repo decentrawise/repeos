@@ -18,6 +18,8 @@ export default class App extends Component {
 
   constructor(props) {
     super(props);
+
+    this.txID = Math.floor(Math.random() * 1000000000); // TODO: Create this in some adequate maner
   }
 
   render() {
@@ -30,12 +32,11 @@ export default class App extends Component {
             </Typography>
           </Toolbar>
         </AppBar>
-
         <Switch>
-          <Route exact path='/' component={Home} />
-          <Route path='/payment' component={Payment} />
-          <Route path='/rate' component={Rate} />
-          <Route path='/result' component={Result} />
+          <Route exact path='/' render={(props) => <Home {...props} tx={this.txID} />} />
+          <Route path='/payment' render={(props) => <Payment {...props} tx={this.txID} />} />
+          <Route path='/rate' render={(props) => <Rate {...props} tx={this.txID} />} />
+          <Route path='/result' render={(props) => <Result {...props} tx={this.txID} />} />
           <Redirect to="/" />
         </Switch>
       </div>

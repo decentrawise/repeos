@@ -64,6 +64,7 @@ class Rate extends Component {
 
     this.state = {
       rating: 0,
+      tx: {},
       data: {
         title: 'Trespass Edwards II Mens Waterproof Jacket with Hood in Green Blue & Grey',
         price: 120,
@@ -73,53 +74,66 @@ class Rate extends Component {
         Product Features: Adjustable Concealed Hood, 2 Zipped Lower Pockets, Zipped Chest Pocket, Hem Drawcord with Side Adjusters, Elasticated Cuff with Adjustable Tabs, Inner Zipped Pocket.`
       }
     };
-    this.handleFormEvent = this.handleFormEvent.bind(this);
+    this.handleRate = this.handleRate.bind(this);
   }
 
   // generic function to handle form events (e.g. "submit" / "reset")
   // push transactions to the blockchain by using eosjs
-  async handleFormEvent(event) {
+  async handleRate(event) {
     // stop default behaviour
     event.preventDefault();
 
     // collect form data
-    let account = event.target.account.value;
-    let privateKey = event.target.privateKey.value;
-    let note = event.target.note.value;
-
-    // prepare variables for the switch below to send transactions
-    let actionName = "";
-    let actionData = {};
-
-    // define actionName and action according to event type
-    switch (event.type) {
-      case "submit":
-        actionName = "update";
-        actionData = {
-          _user: account,
-          _note: note,
-        };
-        break;
-      default:
-        return;
-    }
+    let account1 = accounts[0].name;
+    let account2 = accounts[1].name;
+    let contract = 'repeos';
+    let privateKey = '5JD9AGTuTeD5BXZwGQ5AtwBqHK21aHmYnTetHgk1B3pjj7krT8N';
 
     // eosjs function call: connect to the blockchain
-    const eos = Eos({keyProvider: privateKey});
+    const eos = Eos({keyProvider: [privateKey, accounts[1].privateKey]});
     const result = await eos.transaction({
       actions: [{
-        account: "notechainacc",
-        name: actionName,
+        account: "repeos",
+        name: 'rate2',
         authorization: [{
-          actor: account,
+          actor: contract,
+          permission: 'active',
+        },{
+          actor: account2,
           permission: 'active',
         }],
-        data: actionData,
+        data: {id: this.props.tx, stars: this.state.rating, comment: this.state.comment},
       }],
     });
 
     console.log(result);
-    this.getTable();
+  }
+
+  async componentDidMount() {
+    let contract = 'repeos';
+    let privateKey = '5JD9AGTuTeD5BXZwGQ5AtwBqHK21aHmYnTetHgk1B3pjj7krT8N';
+
+    // eosjs function call: connect to the blockchain
+    const eos = Eos({keyProvider: privateKey});
+    const tableParams = {
+      //  EOS
+      json: true,
+      code: 'repeos',
+      scope: contract,
+      table: 'record',
+      table_key: 'id',
+      lower_bound: this.props.tx,
+      limit: 1,
+      //  Ours
+      max_rows: 1
+    };
+    const result = await eos.getTableRows(tableParams);
+
+    if(result.rows.length == 0) {
+        return;
+    }
+
+    this.setState({tx: result.rows[0]});
   }
 
   render() {
@@ -170,13 +184,13 @@ class Rate extends Component {
                 </Typography>
                 <Typography component="p">
                 <ReactStars
-                  value={5}
+                  value={this.state.tx.user1stars}
                   count={5}
                   size={20}
                   color2={'#ffd700'}
                   edit={false}
                 />
-                Excellent buyer, easy comunication and fast payment. A+
+                {this.state.tx.user1comment}
                 </Typography>
                 <Typography variant="headline" component="h5">
                 &nbsp;
@@ -198,6 +212,8 @@ class Rate extends Component {
                   placeholder="Please leave your comment"
                   margin="normal"
                   fullWidth
+                  value={this.state.comment}
+                  onChange={(val) => {console.log(val);this.setState({comment: val.target.value})}}
                 />
                 </Typography>
               </CardContent>

@@ -72,58 +72,69 @@ class Payment extends Component {
         Product Features: Adjustable Concealed Hood, 2 Zipped Lower Pockets, Zipped Chest Pocket, Hem Drawcord with Side Adjusters, Elasticated Cuff with Adjustable Tabs, Inner Zipped Pocket.`
       }
     };
-    this.handleFormEvent = this.handleFormEvent.bind(this);
+    this.handlePay = this.handlePay.bind(this);
   }
 
-  // generic function to handle form events (e.g. "submit" / "reset")
-  // push transactions to the blockchain by using eosjs
-  async handleFormEvent(event) {
-    // stop default behaviour
-    event.preventDefault();
-
+  // generic function to handle form submit
+  // call contract on blockchain by using eosjs
+  async handlePay(history, to) {
     // collect form data
-    let account = event.target.account.value;
-    let privateKey = event.target.privateKey.value;
-    let note = event.target.note.value;
-
-    // prepare variables for the switch below to send transactions
-    let actionName = "";
-    let actionData = {};
-
-    // define actionName and action according to event type
-    switch (event.type) {
-      case "submit":
-        actionName = "update";
-        actionData = {
-          _user: account,
-          _note: note,
-        };
-        break;
-      default:
-        return;
-    }
+    let account1 = accounts[0].name;
+    let account2 = accounts[1].name;
+    let contract = 'repeos';
+    let privateKey = '5JD9AGTuTeD5BXZwGQ5AtwBqHK21aHmYnTetHgk1B3pjj7krT8N';
 
     // eosjs function call: connect to the blockchain
-    const eos = Eos({keyProvider: privateKey});
+    const eos = Eos({keyProvider: [privateKey, accounts[0].privateKey, accounts[1].privateKey]});
     const result = await eos.transaction({
       actions: [{
-        account: "notechainacc",
-        name: actionName,
+        account: "repeos",
+        name: 'approve2',
         authorization: [{
-          actor: account,
+          actor: contract,
+          permission: 'active',
+        },{
+          actor: account2,
           permission: 'active',
         }],
-        data: actionData,
+        data: {id: this.props.tx},
       }],
     });
 
     console.log(result);
-    this.getTable();
+
+    const result1 = await eos.transaction({
+      actions: [{
+        account: "repeos",
+        name: 'rate1',
+        authorization: [{
+          actor: contract,
+          permission: 'active',
+        },{
+          actor: account1,
+          permission: 'active',
+        }],
+        data: {id: this.props.tx, stars: 5, comment: 'Excellent buyer, easy comunication and fast payment. A+'},
+      }],
+    });
+
+    console.log(result1);
+
+    history.push(to)
   }
 
   render() {
     const { noteTable } = this.state;
     const { classes } = this.props;
+
+    const ButtonToPay = ({ title, history, to }) => (
+      <Button
+        size="small" color="primary"
+        onClick={() => this.handlePay(history, to)}
+      >
+        {title}
+      </Button>
+    );
 
     const ButtonToNavigate = ({ title, history, to }) => (
       <Button
@@ -163,7 +174,7 @@ class Payment extends Component {
             </CardActionArea>
             <CardActions>
               <ButtonToNavigate {...this.props} title="Back" to="/" />
-              <ButtonToNavigate {...this.props} title="PAY" to="/rate" />
+              <ButtonToPay {...this.props} title="PAY" to="/rate" />
             </CardActions>
           </Card>
         </Paper>
