@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import ReactStars from 'react-stars'
+import ReactStars from 'react-stars';
 import Eos from 'eosjs'; // https://github.com/EOSIO/eosjs
 
 // material-ui dependencies
@@ -79,10 +79,7 @@ class Rate extends Component {
 
   // generic function to handle form events (e.g. "submit" / "reset")
   // push transactions to the blockchain by using eosjs
-  async handleRate(event) {
-    // stop default behaviour
-    event.preventDefault();
-
+  async handleRate(history, to) {
     // collect form data
     let account1 = accounts[0].name;
     let account2 = accounts[1].name;
@@ -107,6 +104,8 @@ class Rate extends Component {
     });
 
     console.log(result);
+
+    history.push(to)
   }
 
   async componentDidMount() {
@@ -139,6 +138,15 @@ class Rate extends Component {
   render() {
     const { noteTable } = this.state;
     const { classes } = this.props;
+
+    const ButtonToRate = ({ title, history, to }) => (
+      <Button
+        size="small" color="primary"
+        onClick={() => this.handleRate(history, to)}
+      >
+        {title}
+      </Button>
+    );
 
     const ButtonToNavigate = ({ title, history, to }) => (
       <Button
@@ -220,7 +228,7 @@ class Rate extends Component {
             </CardActionArea>
             <CardActions>
               <ButtonToNavigate {...this.props} title="Back" to="/payment" />
-              <ButtonToNavigate {...this.props} title="Rate" to="/result" />
+              <ButtonToRate {...this.props} title="Rate" to="/result" />
             </CardActions>
           </Card>
         </Paper>

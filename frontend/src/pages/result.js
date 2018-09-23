@@ -4,10 +4,12 @@ import Eos from 'eosjs'; // https://github.com/EOSIO/eosjs
 // material-ui dependencies
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
+import Grid from '@material-ui/core/Grid';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import TextField from '@material-ui/core/TextField';
 import Paper from '@material-ui/core/Paper';
+import ReactStars from 'react-stars';
 import Button from '@material-ui/core/Button';
 
 // NEVER store private keys in any source code in your real life development
@@ -49,72 +51,32 @@ class Result extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      noteTable: [] // to store the table rows from smart contract
+      txs: [] // to store the table rows from smart contract
     };
-    this.handleFormEvent = this.handleFormEvent.bind(this);
   }
 
-  // generic function to handle form events (e.g. "submit" / "reset")
-  // push transactions to the blockchain by using eosjs
-  async handleFormEvent(event) {
-    // stop default behaviour
-    event.preventDefault();
-
-    // collect form data
-    let account = event.target.account.value;
-    let privateKey = event.target.privateKey.value;
-    let note = event.target.note.value;
-
-    // prepare variables for the switch below to send transactions
-    let actionName = "";
-    let actionData = {};
-
-    // define actionName and action according to event type
-    switch (event.type) {
-      case "submit":
-        actionName = "update";
-        actionData = {
-          _user: account,
-          _note: note,
-        };
-        break;
-      default:
-        return;
-    }
+  async componentDidMount() {
+    let contract = 'repeos';
+    let privateKey = '5JD9AGTuTeD5BXZwGQ5AtwBqHK21aHmYnTetHgk1B3pjj7krT8N';
 
     // eosjs function call: connect to the blockchain
     const eos = Eos({keyProvider: privateKey});
-    const result = await eos.transaction({
-      actions: [{
-        account: "notechainacc",
-        name: actionName,
-        authorization: [{
-          actor: account,
-          permission: 'active',
-        }],
-        data: actionData,
-      }],
-    });
+    const tableParams = {
+      //  EOS
+      json: true,
+      code: 'repeos',
+      scope: contract,
+      table: 'record',
+      table_key: 'id',
+      lower_bound: 0,
+    };
+    const result = await eos.getTableRows(tableParams);
 
-    console.log(result);
-    this.getTable();
-  }
+    if(result.rows.length == 0) {
+        return;
+    }
 
-  // gets table data from the blockchain
-  // and saves it into the component state: "noteTable"
-  getTable() {
-    const eos = Eos();
-    eos.getTableRows({
-      "json": true,
-      "code": "notechainacc",   // contract who owns the table
-      "scope": "notechainacc",  // scope of the table
-      "table": "notestruct",    // name of the table as specified by the contract abi
-      "limit": 100,
-    }).then(result => this.setState({ noteTable: result.rows }));
-  }
-
-  componentDidMount() {
-    this.getTable();
+    this.setState({txs: result.rows});
   }
 
   render() {
@@ -122,68 +84,123 @@ class Result extends Component {
     const { classes } = this.props;
 
     // generate each note as a card
-    const generateCard = (key, timestamp, user, note) => (
-      <Card className={classes.card} key={key}>
-        <CardContent>
-          <Typography variant="headline" component="h2">
-            {user}
-          </Typography>
-          <Typography style={{fontSize:12}} color="textSecondary" gutterBottom>
-            {new Date(timestamp*1000).toString()}
-          </Typography>
-          <Typography component="pre">
-            {note}
-          </Typography>
-        </CardContent>
-      </Card>
-    );
-    let noteCards = noteTable.map((row, i) =>
-      generateCard(i, row.timestamp, row.user, row.note));
+    const generateCard1 = (key, user, txs) => {
+      var total = 0;
+      var avg = 0;
+      var comments = [];
+      if(txs.length > 0) {
+        for(var i = 0; i < txs.length; i++) {
+          total += txs[i].user1stars;
+
+          comments.push(
+            <div>
+              <br />
+              <ReactStars
+                value={txs[i].user1stars}
+                count={5}
+                size={20}
+                color2={'#ffd700'}
+                edit={false}
+              />
+              {txs[i].user1comment}
+            </div>
+          );
+        }
+        avg = total / txs.length;
+      }
+
+      return (
+        <Grid item xs={6}>
+          <Card className={classes.card} key={key}>
+            <CardContent>
+              <Typography variant="headline" component="h2">
+                {user}
+              </Typography>
+              <ReactStars
+                value={avg}
+                count={5}
+                size={20}
+                color2={'#ffd700'}
+                edit={false}
+              />
+              <hr />
+              <Typography style={{fontSize:12}} color="textSecondary" gutterBottom>
+                {comments}
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+      );
+    }
+
+    // generate each note as a card
+    const generateCard2 = (key, user, txs) => {
+      var total = 0;
+      var avg = 0;
+      var comments = [];
+      if(txs.length > 0) {
+        for(var i = 0; i < txs.length; i++) {
+          total += txs[i].user2stars;
+
+          comments.push(
+            <div>
+              <br />
+              <ReactStars
+                value={txs[i].user2stars}
+                count={5}
+                size={20}
+                color2={'#ffd700'}
+                edit={false}
+              />
+              {txs[i].user2comment}
+            </div>
+          );
+        }
+        avg = total / txs.length;
+      }
+
+      return (
+        <Grid item xs={6}>
+          <Card className={classes.card} key={key}>
+            <CardContent>
+              <Typography variant="headline" component="h2">
+                {user}
+              </Typography>
+              <ReactStars
+                value={avg}
+                count={5}
+                size={20}
+                color2={'#ffd700'}
+                edit={false}
+              />
+              <hr />
+              <Typography style={{fontSize:12}} color="textSecondary" gutterBottom>
+                {comments}
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+      );
+    }
+
+    const card1 = generateCard1(1, 'user1', this.state.txs);
+    const card2 = generateCard2(2, 'user2', this.state.txs);
 
     return (
       <div>
-        {noteCards}
         <Paper className={classes.paper}>
           <Typography variant="title" color="inherit">
             Result
           </Typography>
-          <form onSubmit={this.handleFormEvent}>
-            <TextField
-              name="account"
-              autoComplete="off"
-              label="Account"
-              margin="normal"
-              fullWidth
-            />
-            <TextField
-              name="privateKey"
-              autoComplete="off"
-              label="Private key"
-              margin="normal"
-              fullWidth
-            />
-            <TextField
-              name="note"
-              autoComplete="off"
-              label="Note (Optional)"
-              margin="normal"
-              multiline
-              rows="10"
-              fullWidth
-            />
-            <Button
-              variant="contained"
-              color="primary"
-              className={classes.formButton}
-              type="submit">
-              Add / Update note
-            </Button>
-          </form>
+          <Grid container>
+            {card1}
+            {card2}
+          </Grid>
         </Paper>
         <pre className={classes.pre}>
-          Below is a list of pre-created accounts information for add/update note:
+          Below is what is written to the Smart-Contract:
           <br/><br/>
-          accounts = { JSON.stringify(accounts, null, 2) }
+          {JSON.stringify(this.state.txs, null, 2)}
         </pre>
       </div>
     );
