@@ -12,8 +12,6 @@ namespace decentrawise
 void repeos::create(uint64_t id, account_name user1, account_name user2)
 {
     require_auth(_self);
-    require_auth(user1);
-    require_auth(user2);
     
     records rectable( _self, _self );
     
