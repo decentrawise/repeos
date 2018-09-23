@@ -11,6 +11,7 @@ namespace decentrawise
 
 void repeos::create(uint64_t id, account_name user1, account_name user2)
 {
+    print("repeos::create - start");
     require_auth(_self);
     
     records rectable( _self, _self );
@@ -29,10 +30,12 @@ void repeos::create(uint64_t id, account_name user1, account_name user2)
         rec.user2stars = 0;
         rec.user2comment = std::string("");
     });
+    print("repeos::create - end");
 }
 
 void repeos::approve1(uint64_t id)
 {
+    print("repeos::approve1 - start");
     require_auth(_self);
 
     records rectable( _self, _self );
@@ -44,10 +47,12 @@ void repeos::approve1(uint64_t id)
     {
         rec.user1approved = true;
     });
+    print("repeos::approve1 - end");
 }
 
 void repeos::approve2(uint64_t id)
 {
+    print("repeos::approve2 - start");
     require_auth(_self);
 
     records rectable( _self, _self );
@@ -60,10 +65,12 @@ void repeos::approve2(uint64_t id)
     {
         rec.user2approved = true;
     });
+    print("repeos::approve2 - end");
 }
 
 void repeos::rate1(uint64_t id, uint8_t stars, const std::string &comment)
 {
+    print("repeos::rate1 - start");
     require_auth(_self);
     
 
@@ -77,10 +84,12 @@ void repeos::rate1(uint64_t id, uint8_t stars, const std::string &comment)
         rec.user1stars = stars;
         rec.user1comment = comment;
     });
+    print("repeos::rate1 - end");
 }
 
 void repeos::rate2(uint64_t id, uint8_t stars, const std::string &comment)
 {
+    print("repeos::rate2 - start");
     require_auth(_self);
 
     records rectable( _self, _self );
@@ -93,6 +102,7 @@ void repeos::rate2(uint64_t id, uint8_t stars, const std::string &comment)
         rec.user2stars = stars;
         rec.user2comment = comment;
     });
+    print("repeos::rate2 - end");
 }
 
 } // namespace
