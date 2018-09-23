@@ -3,8 +3,21 @@
 RepEOS demonstrates the use of eosio platform for controlling user's reputation score and ratings in a decentralized immutable and trust-less way.
 
 ## The idea
+A universal reputation system that can be used by everybody and shared by any platform that puts your data in your hands. Create profiles for each role and service that you, your company or product represent to the world.
 
-...
+You don’t need to start your reputation from scratch just because you decided to sell on a new store. Just allow the new store to link with the blockchain and start using your data from your first rating. You can even use without any store or intermediary.
+
+Create profiles to use on your social and commercial roles, being buyer or seller profile, developer or musician, teacher or even as a reputation submitter. Allow your company to have several reputation profiles, based on different business it may practice.
+
+Get control of your data and rest assured your data can’t be tampered with, lost or hacked. It’s available to you at all times so you can use it however you feel like.
+
+Avoid spam and trolling by having to agree to accept RepEOS ratings by both parties. Doing so, also helps you keeping track of what transaction a rating refers to.
+
+Keeping an eye on the future, we have some nice features that we’d like to implement.
+
+A token would generate an interesting economy around the platform, in order to create incentives for growth and for best practices when using the platform. Another economic incentive would be for intermediaries, like online stores to profit for creating the means to facilitate the usage of RepEOS platform.
+
+
 
 #### NOTE: This project is work in progress and only for demonstration purposes
 
