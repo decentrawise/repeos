@@ -8,9 +8,9 @@ node_modules/
 frontend/build
 
 #compile contract files
-**/*.abi
-**/*.wasm
-**/*.wast
+# **/*.abi
+# **/*.wasm
+# **/*.wast
 
 #blockchain data
 **/data/*

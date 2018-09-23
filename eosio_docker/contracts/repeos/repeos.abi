@@ -1,0 +1,80 @@
+{
+    "version": "eosio::abi/1.0",
+    "types": [
+        { "new_type_name": "account_name", "type": "name" }
+    ],
+    "structs": [
+        {
+            "name": "record",
+            "base": "",
+            "fields": [
+                {"name": "id", "type": "account_name"},
+                {"name": "user1", "type": "account_name"},
+                {"name": "user1approved", "type": "bool"},
+                {"name": "user1stars", "type": "uint8"},
+                {"name": "user1comment", "type": "string"},
+                {"name": "user2", "type": "account_name"},
+                {"name": "user2approved", "type": "bool"},
+                {"name": "user2stars", "type": "uint8"},
+                {"name": "user2comment", "type": "string"}
+            ]
+        },
+        {
+            "name": "create",
+            "base": "",
+            "fields": [
+                {"name": "id", "type": "uint64"},
+                {"name": "user1", "type": "account_name"},
+                {"name": "user2", "type": "account_name"}
+            ]
+        },
+        {
+            "name": "approve1",
+            "base": "",
+            "fields": [
+                {"name": "id", "type": "uint64"}
+            ]
+        },
+        {
+            "name": "approve2",
+            "base": "",
+            "fields": [
+                {"name": "id", "type": "uint64"}
+            ]
+        },
+        {
+            "name": "rate1",
+            "base": "",
+            "fields": [
+                {"name": "id", "type": "uint64"},
+                {"name": "stars", "type": "uint8"},
+                {"name": "comment", "type": "string"}
+            ]
+        },
+        {
+            "name": "rate2",
+            "base": "",
+            "fields": [
+                {"name": "id", "type": "uint64"},
+                {"name": "stars", "type": "uint8"},
+                {"name": "comment", "type": "string"}
+            ]
+        }
+    ],
+    "actions": [
+        { "name": "create", "type": "create" },
+        { "name": "approve1", "type": "approve1" },
+        { "name": "approve2", "type": "approve2" },
+        { "name": "rate1", "type": "rate1" },
+        { "name": "rate2", "type": "rate2" }
+    ],
+    "tables": [
+        {
+            "name": "record",
+            "type": "record",
+            "index_type": "i64",
+            "key_names" : ["id"],
+            "key_types" : ["uint64"]
+        }
+    ]
+}
